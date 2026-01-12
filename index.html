@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION2 숙제 관리기 v8.4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
+        body { background-color: #0f172a; color: white; font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
+        .checked-item { opacity: 0.3; text-decoration: line-through; }
+        #addModal { display: none; }
+        #addModal.active { display: flex !important; }
+        
+        .counter-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(15, 23, 42, 0.5); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(51, 65, 85, 0.4); }
+        .counter-unit { display: flex; align-items: center; gap: 6px; }
+        .counter-btn { width: 26px; height: 26px; background-color: #334155; border-radius: 6px; display: flex; items-center; justify-content: center; font-size: 16px; transition: all 0.2s; font-weight: bold; }
+        .num-display { min-width: 24px; text-align: center; font-weight: 900; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.2); font-size: 1.1rem; }
+        .rule-text { font-size: 0.7rem; color: #64748b; font-weight: normal; margin-left: 4px; }
+    </style>
+</head>
+<body class="p-3 md:p-6">
+
+    <header class="max-w-6xl mx-auto mb-4 flex justify-between items-center border-b border-slate-800 pb-3">
+        <div>
+            <h1 class="text-2xl font-black text-blue-500 tracking-tighter italic leading-none">AION2 TASKER</h1>
+            <p class="text-slate-500 text-[11px] mt-1 font-bold uppercase">Reset: Daily/Wed 05:00</p>
+        </div>
+        <button onclick="document.getElementById('addModal').classList.add('active')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg">
+            + 캐릭터 등록
+        </button>
+    </header>
+
+    <main id="character-grid" class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    </main>
+
+    <div id="addModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl">
+            <h2 class="text-xl font-bold mb-4 text-center">캐릭터 추가</h2>
+            <div class="space-y-3">
+                <input id="new-name" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500" placeholder="캐릭터 이름">
+                <select id="new-class" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white outline-none">
+                    <option>검성</option><option>수호성</option><option>살성</option><option>궁성</option>
+                    <option>호법성</option><option>치유성</option><option>마도성</option><option>정령성</option>
+                </select>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="document.getElementById('addModal').classList.remove('active')" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold">취소</button>
+                <button onclick="saveCharacter()" class="flex-1 bg-blue-600 py-3 rounded-xl font-bold text-white">등록</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'aion2_tasks_v8_4';
+        const RESET_KEY = 'aion2_last_reset_time_v8_4';
+
+        let characters = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let lastResetTime = parseInt(localStorage.getItem(RESET_KEY)) || 0;
+
+        function checkAutoReset() {
+            const now = new Date();
+            let lastResetDate = new Date(lastResetTime);
+            while (true) {
+                let nextReset = new Date(lastResetDate);
+                nextReset.setHours(5, 0, 0, 0);
+                if (nextReset <= lastResetDate) nextReset.setDate(nextReset.getDate() + 1);
+                if (now < nextReset) break;
+                
+                const isWednesday = (nextReset.getDay() === 3);
+                characters.forEach(char => {
+                    char.missionDone = false;
+                    if (isWednesday) {
+                        char.tasks.dailyDungeon.natural = 7;
+                        char.tasks.subjugation.natural = 3;
+                        char.tasks.awakening.natural = 3;
+                    }
+                    char.tasks.shugo.natural += 2;
+                    char.tasks.conquest.natural += 1;
+                    char.tasks.transcendence.natural += 1;
+                    char.tasks.nightmare.natural += 2; // 악몽의 던전 매일 +2회 추가
+                });
+                lastResetDate = nextReset;
+            }
+            lastResetTime = lastResetDate.getTime();
+            localStorage.setItem(RESET_KEY, lastResetTime);
+            updateStorage();
+            render();
+        }
+
+        function saveCharacter() {
+            const nameInput = document.getElementById('new-name');
+            const classInput = document.getElementById('new-class');
+            if (!nameInput.value.trim()) return;
+            const newChar = {
+                id: Date.now(),
+                name: nameInput.value,
+                class: classInput.value,
+                missionDone: false,
+                tasks: {
+                    shugo: { natural: 14, charge: 0 },
+                    conquest: { natural: 21, charge: 0 },
+                    dailyDungeon: { natural: 7, charge: 0 },
+                    subjugation: { natural: 3, charge: 0 },
+                    awakening: { natural: 3, charge: 0 },
+                    transcendence: { natural: 14, charge: 0 },
+                    nightmare: { natural: 14, charge: 0 } // 악몽의 던전 초기값
+                }
+            };
+            characters.push(newChar);
+            updateStorage();
+            render();
+            nameInput.value = '';
+            document.getElementById('addModal').classList.remove('active');
+        }
+
+        function updateCount(charId, taskKey, type, change) {
+            const char = characters.find(c => c.id === charId);
+            char.tasks[taskKey][type] = Math.max(0, char.tasks[taskKey][type] + change);
+            updateStorage();
+            render();
+        }
+
+        function setManualCount(charId, taskKey, type) {
+            const char = characters.find(c => c.id === charId);
+            const newVal = prompt(`값 입력`, char.tasks[taskKey][type]);
+            if (newVal !== null && !isNaN(newVal)) {
+                char.tasks[taskKey][type] = Math.max(0, parseInt(newVal));
+                updateStorage();
+                render();
+            }
+        }
+
+        function render() {
+            const grid = document.getElementById('character-grid');
+            grid.innerHTML = '';
+            characters.forEach(char => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-800/60 backdrop-blur-md p-4 rounded-[1.5rem] border border-slate-700 relative shadow-xl";
+                card.innerHTML = `
+                    <button onclick="deleteCharacter(${char.id})" class="absolute top-4 right-5 text-slate-600 hover:text-red-400 font-bold text-[10px] uppercase">Del</button>
+                    <div class="mb-3 flex items-center gap-2">
+                        <span class="text-blue-400 font-bold text-[10px] border border-blue-400/40 px-1.5 py-0.5 rounded uppercase">${char.class}</span>
+                        <h2 class="text-xl font-black text-white tracking-tight">${char.name}</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <div onclick="toggleMission(${char.id})" class="flex items-center justify-between p-2 bg-slate-900/60 rounded-xl border border-slate-700/50 cursor-pointer">
+                            <span class="${char.missionDone ? 'checked-item' : 'text-slate-200'} font-bold text-sm italic">사명 임무 <span class="rule-text">(Daily)</span></span>
+                            <div class="w-5 h-5 rounded border-2 border-slate-600 flex items-center justify-center text-sm ${char.missionDone ? 'bg-green-500 border-green-500' : ''}">${char.missionDone ? '✓' : ''}</div>
+                        </div>
+                        ${renderRow(char.id, '악몽의 던전', 'nightmare', char.tasks.nightmare, '(매일+2)')}
+                        ${renderRow(char.id, '슈고 페스타', 'shugo', char.tasks.shugo, '(매일+2)')}
+                        ${renderRow(char.id, '정복 던전', 'conquest', char.tasks.conquest, '(매일+1)')}
+                        ${renderRow(char.id, '일일 던전', 'dailyDungeon', char.tasks.dailyDungeon, '(매주 수+7)')}
+                        ${renderRow(char.id, '토벌전', 'subjugation', char.tasks.subjugation, '(매주 수+3)')}
+                        ${renderRow(char.id, '각성전', 'awakening', char.tasks.awakening, '(매주 수+3)')}
+                        ${renderRow(char.id, '초월', 'transcendence', char.tasks.transcendence, '(매일+1)')}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderRow(charId, label, taskKey, data, rule) {
+            return `
+                <div class="space-y-0.5">
+                    <div class="text-[15px] font-black text-slate-100 ml-1 tracking-tight">
+                        ${label} <span class="rule-text">${rule}</span>
+                    </div>
+                    <div class="counter-row">
+                        <div class="counter-unit flex-1">
+                            <span class="text-sm text-slate-400 font-bold">자연</span>
+                            <button onclick="updateCount(${charId}, '${taskKey}', 'natural', -1)" class="counter-btn">-</button>
+                            <span onclick="setManualCount(${charId}, '${taskKey}', 'natural')" class="num-display text-orange-400">${data.natural}</span>
+                            <button onclick="updateCount(${charId}, '${taskKey}', 'natural', 1)" class="counter-btn">+</button>
+                        </div>
+                        <div class="w-[1px] h-3 bg-slate-700"></div>
+                        <div class="counter-unit flex-1 justify-end">
+                            <span class="text-sm text-slate-400 font-bold">충전</span>
+                            <button onclick="updateCount(${charId}, '${taskKey}', 'charge', -1)" class="counter-btn">-</button>
+                            <span onclick="setManualCount(${charId}, '${taskKey}', 'charge')" class="num-display text-blue-400">${data.charge}</span>
+                            <button onclick="updateCount(${charId}, '${taskKey}', 'charge', 1)" class="counter-btn">+</button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function toggleMission(id) { const c = characters.find(x => x.id === id); c.missionDone = !c.missionDone; updateStorage(); render(); }
+        function deleteCharacter(id) { if(confirm("삭제?")) { characters = characters.filter(c => c.id !== id); updateStorage(); render(); } }
+        function updateStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); }
+
+        if (!localStorage.getItem(RESET_KEY)) {
+            let initialReset = new Date();
+            initialReset.setHours(5, 0, 0, 0);
+            if (new Date() < initialReset) initialReset.setDate(initialReset.getDate() - 1);
+            localStorage.setItem(RESET_KEY, initialReset.getTime());
+        }
+        checkAutoReset();
+        setInterval(checkAutoReset, 60000); 
+        render();
+    </script>
+</body>
+</html>
