@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AION2 숙제관리 </title>
+    <title>AION2 숙제관리</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
@@ -55,20 +55,14 @@
     </div>
 
     <script>
-        // 저장 키 이름을 새롭게 변경하여 충돌 방지
-        const STORAGE_KEY = 'aion2_final_db';
-        const RESET_KEY = 'aion2_final_reset';
+        const STORAGE_KEY = 'aion2_final_v1'; 
+        const RESET_KEY = 'aion2_reset_v1';
 
         let characters = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         let lastResetTime = parseInt(localStorage.getItem(RESET_KEY)) || 0;
 
-        function openModal() {
-            document.getElementById('addModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('active');
-        }
+        function openModal() { document.getElementById('addModal').classList.add('active'); }
+        function closeModal() { document.getElementById('addModal').classList.remove('active'); }
 
         function checkAutoReset() {
             const now = new Date();
@@ -93,15 +87,17 @@
                 const isWednesday = (nextReset.getDay() === 3);
                 characters.forEach(char => {
                     char.missionDone = false;
+                    
                     if (isWednesday) {
                         char.tasks.dailyDungeon.natural = 7;
                         char.tasks.subjugation.natural = 3;
                         char.tasks.awakening.natural = 3;
                     }
-                    char.tasks.shugo.natural += 2;
-                    char.tasks.conquest.natural += 1;
-                    char.tasks.transcendence.natural += 1;
-                    char.tasks.nightmare.natural += 2; 
+
+                    char.tasks.nightmare.natural = Math.min(14, char.tasks.nightmare.natural + 2);
+                    char.tasks.shugo.natural = Math.min(14, char.tasks.shugo.natural + 2);
+                    char.tasks.conquest.natural = Math.min(21, char.tasks.conquest.natural + 1);
+                    char.tasks.transcendence.natural = Math.min(14, char.tasks.transcendence.natural + 1);
                 });
                 lastResetDate = nextReset;
                 updated = true;
@@ -118,11 +114,7 @@
             const nameInput = document.getElementById('new-name');
             const classInput = document.getElementById('new-class');
             const name = nameInput.value.trim();
-            
-            if (!name) {
-                alert("이름을 입력해주세요!");
-                return;
-            }
+            if (!name) return;
 
             const newChar = {
                 id: Date.now(),
@@ -130,16 +122,15 @@
                 class: classInput.value,
                 missionDone: false,
                 tasks: {
+                    nightmare: { natural: 2, charge: 0 },
                     shugo: { natural: 4, charge: 0 },
                     conquest: { natural: 3, charge: 0 },
                     dailyDungeon: { natural: 7, charge: 0 },
                     subjugation: { natural: 3, charge: 0 },
                     awakening: { natural: 3, charge: 0 },
-                    transcendence: { natural: 0, charge: 0 },
-                    nightmare: { natural: 2, charge: 0 }
+                    transcendence: { natural: 0, charge: 0 }
                 }
             };
-
             characters.push(newChar);
             updateStorage();
             render();
@@ -185,13 +176,13 @@
                             <span class="${char.missionDone ? 'checked-item' : 'text-slate-200'} font-bold text-sm italic">사명 임무 <span class="rule-text">(Daily)</span></span>
                             <div class="w-5 h-5 rounded border-2 border-slate-600 flex items-center justify-center text-sm ${char.missionDone ? 'bg-green-500 border-green-500' : ''}">${char.missionDone ? '✓' : ''}</div>
                         </div>
-                        ${renderRow(char.id, '악몽의 던전', 'nightmare', char.tasks.nightmare, '(+2)')}
-                        ${renderRow(char.id, '슈고 페스타', 'shugo', char.tasks.shugo, '(+2)')}
-                        ${renderRow(char.id, '정복 던전', 'conquest', char.tasks.conquest, '(+1)')}
+                        ${renderRow(char.id, '악몽의 던전', 'nightmare', char.tasks.nightmare, '(+2/max14)')}
+                        ${renderRow(char.id, '슈고 페스타', 'shugo', char.tasks.shugo, '(+2/max14)')}
+                        ${renderRow(char.id, '정복 던전', 'conquest', char.tasks.conquest, '(+1/max21)')}
                         ${renderRow(char.id, '일일 던전', 'dailyDungeon', char.tasks.dailyDungeon, '(Wed)')}
                         ${renderRow(char.id, '토벌전', 'subjugation', char.tasks.subjugation, '(Wed)')}
                         ${renderRow(char.id, '각성전', 'awakening', char.tasks.awakening, '(Wed)')}
-                        ${renderRow(char.id, '초월', 'transcendence', char.tasks.transcendence, '(+1)')}
+                        ${renderRow(char.id, '초월', 'transcendence', char.tasks.transcendence, '(+1/max14)')}
                     </div>
                 `;
                 grid.appendChild(card);
@@ -226,23 +217,16 @@
             const c = characters.find(x => x.id === id); 
             if(c) { c.missionDone = !c.missionDone; updateStorage(); render(); }
         }
-
         function deleteCharacter(id) { 
-            if(confirm("이 캐릭터를 삭제하시겠습니까?")) { 
+            if(confirm("삭제하시겠습니까?")) { 
                 characters = characters.filter(c => c.id !== id); 
-                updateStorage(); 
-                render(); 
+                updateStorage(); render(); 
             } 
         }
+        function updateStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); }
 
-        function updateStorage() { 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); 
-        }
-
-        // 초기 실행
         checkAutoReset();
         render();
-        // 1분마다 리셋 체크
         setInterval(checkAutoReset, 60000); 
     </script>
 </body>
