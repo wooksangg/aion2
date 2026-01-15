@@ -55,9 +55,8 @@
     </div>
 
     <script>
-        // 저장 키 이름을 갱신하여 깨끗한 상태로 시작
-        const STORAGE_KEY = 'aion2_final_v9_stable'; 
-        const RESET_KEY = 'aion2_final_reset_v9';
+        const STORAGE_KEY = 'aion2_final_v10_stable'; 
+        const RESET_KEY = 'aion2_final_reset_v10';
 
         let characters = [];
         try {
@@ -69,14 +68,8 @@
 
         let lastResetTime = parseInt(localStorage.getItem(RESET_KEY)) || 0;
 
-        function openModal() {
-            document.getElementById('addModal').classList.add('active');
-            document.getElementById('new-name').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('active');
-        }
+        function openModal() { document.getElementById('addModal').classList.add('active'); document.getElementById('new-name').focus(); }
+        function closeModal() { document.getElementById('addModal').classList.remove('active'); }
 
         function checkAutoReset() {
             const now = new Date();
@@ -89,8 +82,8 @@
             let lastDate = new Date(lastResetTime);
             let updated = false;
             const conquestHours = [5, 13, 21];
+            const transcendenceHours = [0, 12]; // 초월 충전 시간 (0시, 12시)
 
-            // 1시간씩 시뮬레이션하며 충전 체크
             while (true) {
                 let checkPoint = new Date(lastDate);
                 checkPoint.setHours(checkPoint.getHours() + 1, 0, 0, 0);
@@ -101,13 +94,13 @@
                 const isWednesday = (checkPoint.getDay() === 3 && h === 5);
 
                 characters.forEach(char => {
-                    if (!char.tasks) return; // 데이터 구조 안전성 체크
+                    if (!char.tasks) return;
 
+                    // 1. 매일 오전 5시 리셋 (미션, 악몽, 슈고, 주간던전)
                     if (h === 5) {
                         char.missionDone = false;
                         char.tasks.nightmare.natural = Math.min(14, (char.tasks.nightmare.natural || 0) + 2);
                         char.tasks.shugo.natural = Math.min(14, (char.tasks.shugo.natural || 0) + 2);
-                        char.tasks.transcendence.natural = Math.min(14, (char.tasks.transcendence.natural || 0) + 1);
                         
                         if (isWednesday) {
                             char.tasks.dailyDungeon.natural = 7;
@@ -116,8 +109,14 @@
                         }
                     }
 
+                    // 2. 정복 던전 충전 (5, 13, 21시)
                     if (conquestHours.includes(h)) {
                         char.tasks.conquest.natural = Math.min(21, (char.tasks.conquest.natural || 0) + 1);
+                    }
+
+                    // 3. 초월 충전 (0, 12시)
+                    if (transcendenceHours.includes(h)) {
+                        char.tasks.transcendence.natural = Math.min(14, (char.tasks.transcendence.natural || 0) + 1);
                     }
                 });
                 
@@ -137,10 +136,7 @@
             const nameInput = document.getElementById('new-name');
             const classInput = document.getElementById('new-class');
             const name = nameInput.value.trim();
-            if (!name) {
-                alert("캐릭터 이름을 입력하세요.");
-                return;
-            }
+            if (!name) return;
 
             const newChar = {
                 id: Date.now(),
@@ -148,13 +144,13 @@
                 class: classInput.value,
                 missionDone: false,
                 tasks: {
-                    nightmare: { natural: 14, charge: 0 },
-                    shugo: { natural: 14, charge: 0 },
-                    conquest: { natural: 21, charge: 0 },
+                    nightmare: { natural: 2, charge: 0 },
+                    shugo: { natural: 4, charge: 0 },
+                    conquest: { natural: 3, charge: 0 },
                     dailyDungeon: { natural: 7, charge: 0 },
                     subjugation: { natural: 3, charge: 0 },
                     awakening: { natural: 3, charge: 0 },
-                    transcendence: { natural: 14, charge: 0 }
+                    transcendence: { natural: 0, charge: 0 }
                 }
             };
             characters.push(newChar);
@@ -208,7 +204,7 @@
                         ${renderRow(char.id, '일일 던전', 'dailyDungeon', char.tasks.dailyDungeon, '(Wed)')}
                         ${renderRow(char.id, '토벌전', 'subjugation', char.tasks.subjugation, '(Wed)')}
                         ${renderRow(char.id, '각성전', 'awakening', char.tasks.awakening, '(Wed)')}
-                        ${renderRow(char.id, '초월', 'transcendence', char.tasks.transcendence, '(+1/max14)')}
+                        ${renderRow(char.id, '초월', 'transcendence', char.tasks.transcendence, '(0,12시/max14)')}
                     </div>
                 `;
                 grid.appendChild(card);
@@ -239,25 +235,11 @@
                 </div>`;
         }
 
-        function toggleMission(id) { 
-            const c = characters.find(x => x.id === id); 
-            if(c) { c.missionDone = !c.missionDone; updateStorage(); render(); }
-        }
-        function deleteCharacter(id) { 
-            if(confirm("삭제하시겠습니까?")) { 
-                characters = characters.filter(c => c.id !== id); 
-                updateStorage(); render(); 
-            } 
-        }
-        function updateStorage() { 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); 
-        }
+        function toggleMission(id) { const c = characters.find(x => x.id === id); if(c) { c.missionDone = !c.missionDone; updateStorage(); render(); } }
+        function deleteCharacter(id) { if(confirm("삭제하시겠습니까?")) { characters = characters.filter(c => c.id !== id); updateStorage(); render(); } }
+        function updateStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); }
 
-        // 초기 구동
-        checkAutoReset();
-        render();
-        setInterval(checkAutoReset, 60000); 
+        checkAutoReset(); render(); setInterval(checkAutoReset, 60000); 
     </script>
 </body>
 </html>
-
