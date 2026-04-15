@@ -9,47 +9,46 @@
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700;900&display=swap');
         body { background-color: #0f172a; color: white; font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
         .checked-item { opacity: 0.3; text-decoration: line-through; }
-        /* 모달 스타일 수정 */
         #addModal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
         #addModal.active { display: flex !important; }
-        .counter-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(15, 23, 42, 0.5); padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(51, 65, 85, 0.4); }
-        .counter-unit { display: flex; align-items: center; gap: 6px; }
-        .counter-btn { width: 26px; height: 26px; background-color: #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s; font-weight: bold; cursor: pointer; border: none; color: white; line-height: 1; }
+        .counter-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; background: rgba(15, 23, 42, 0.5); padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(51, 65, 85, 0.4); }
+        .counter-unit { display: flex; align-items: center; gap: 4px; }
+        .counter-btn { width: 22px; height: 22px; background-color: #334155; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; font-weight: bold; cursor: pointer; border: none; color: white; line-height: 1; }
         .counter-btn:hover { background-color: #475569; }
-        .num-display { min-width: 24px; text-align: center; font-weight: 900; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.2); font-size: 1.1rem; }
-        .rule-text { font-size: 0.7rem; color: #64748b; font-weight: normal; margin-left: 4px; }
-        .section-title { font-size: 0.75rem; font-weight: 900; color: #3b82f6; margin-top: 8px; margin-bottom: 4px; border-left: 3px solid #3b82f6; padding-left: 6px; text-transform: uppercase; }
-        .account-box { background: rgba(30, 41, 59, 0.7); border: 2px solid #3b82f6; border-radius: 1.5rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+        .num-display { min-width: 20px; text-align: center; font-weight: 900; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.2); font-size: 0.95rem; }
+        .rule-text { font-size: 0.65rem; color: #64748b; font-weight: normal; margin-left: 2px; }
+        .section-title { font-size: 0.7rem; font-weight: 900; color: #3b82f6; margin-top: 6px; margin-bottom: 3px; border-left: 3px solid #3b82f6; padding-left: 6px; text-transform: uppercase; }
+        .account-box { background: rgba(30, 41, 59, 0.7); border: 2px solid #3b82f6; border-radius: 1.25rem; padding: 1rem; margin-bottom: 1.5rem; }
     </style>
 </head>
-<body class="p-3 md:p-6">
+<body class="p-2 md:p-4">
 
-    <header class="max-w-6xl mx-auto mb-4 flex justify-between items-end border-b border-slate-800 pb-3">
+    <header class="max-w-[1600px] mx-auto mb-4 flex justify-between items-end border-b border-slate-800 pb-3">
         <div class="flex items-baseline gap-3">
-            <h1 class="text-2xl font-black text-blue-500 tracking-tighter italic leading-none">AION2 TASKER</h1>
+            <h1 class="text-xl md:text-2xl font-black text-blue-500 tracking-tighter italic leading-none">AION2 TASKER</h1>
             <div class="flex flex-col">
                 <span class="text-slate-400 text-[10px] font-bold tracking-tight">Created by <span class="text-blue-400">이슈타르-영혼</span></span>
-                <span class="text-slate-600 text-[9px] leading-tight text-nowrap">모든 데이터는 개인 PC에 저장됩니다.</span>
             </div>
         </div>
-        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg whitespace-nowrap">
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg font-bold text-xs transition-all shadow-lg whitespace-nowrap">
             + 캐릭터 등록
         </button>
     </header>
 
-    <main class="max-w-6xl mx-auto">
+    <main class="max-w-[1600px] mx-auto">
         <div id="account-section" class="account-box">
-            <h2 class="text-lg font-black text-white mb-3 flex items-center gap-2">
-                <span class="bg-blue-600 text-[10px] px-2 py-0.5 rounded">ACCOUNT</span> 계정 공통 숙제
+            <h2 class="text-base font-black text-white mb-3 flex items-center gap-2">
+                <span class="bg-blue-600 text-[9px] px-1.5 py-0.5 rounded uppercase">Account</span> 계정 공통
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3" id="account-grid"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="account-grid"></div>
         </div>
-        <div id="character-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        
+        <div id="character-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
     </main>
 
     <div id="addModal" onclick="closeModal()">
-        <div class="bg-slate-800 w-full max-w-sm rounded-3xl p-6 border border-slate-700 shadow-2xl mx-4" onclick="event.stopPropagation()">
-            <h2 class="text-xl font-bold mb-4 text-center text-white">캐릭터 추가</h2>
+        <div class="bg-slate-800 w-full max-w-sm rounded-2xl p-6 border border-slate-700 shadow-2xl mx-4" onclick="event.stopPropagation()">
+            <h2 class="text-lg font-bold mb-4 text-center text-white">캐릭터 추가</h2>
             <div class="space-y-3">
                 <input id="new-name" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white outline-none" placeholder="캐릭터 이름">
                 <select id="new-class" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white outline-none">
@@ -65,55 +64,36 @@
     </div>
 
     <script>
-        // 키 이름을 완전히 새롭게 바꿔서 충돌 원천 차단
         const STORAGE_KEY = 'aion2_final_v13_db'; 
         const ACCOUNT_KEY = 'aion2_final_v13_acc';
         const RESET_KEY = 'aion2_final_v13_reset';
 
         let characters = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
         let accountData = JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || {
-            odeCraft: false, odeShop: false, 
-            shugo: { natural: 4, charge: 0 }, 
-            dailyDungeon: { natural: 7, charge: 0 }
+            odeCraft: false, odeShop: false, shugo: { natural: 4, charge: 0 }, dailyDungeon: { natural: 7, charge: 0 }
         };
         let lastResetTime = parseInt(localStorage.getItem(RESET_KEY)) || 0;
 
-        function openModal() {
-            const modal = document.getElementById('addModal');
-            modal.classList.add('active');
-            document.getElementById('new-name').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('addModal').classList.remove('active');
-        }
+        function openModal() { document.getElementById('addModal').classList.add('active'); document.getElementById('new-name').focus(); }
+        function closeModal() { document.getElementById('addModal').classList.remove('active'); }
 
         function checkAutoReset() {
             const now = new Date();
             if (lastResetTime === 0) { lastResetTime = now.getTime(); localStorage.setItem(RESET_KEY, lastResetTime); return; }
-
             let lastDate = new Date(lastResetTime);
             let updated = false;
             const conquestHours = [5, 13, 21];
             const transcendenceHours = [0, 12];
-
             while (true) {
                 let checkPoint = new Date(lastDate);
                 checkPoint.setHours(checkPoint.getHours() + 1, 0, 0, 0);
                 if (checkPoint > now) break;
-
                 const h = checkPoint.getHours();
                 const isWednesday = (checkPoint.getDay() === 3 && h === 5);
-
                 if (h === 5) {
                     accountData.shugo.natural = Math.min(14, (accountData.shugo.natural || 0) + 2);
-                    if (isWednesday) {
-                        accountData.odeCraft = false;
-                        accountData.odeShop = false;
-                        accountData.dailyDungeon.natural = 7;
-                    }
+                    if (isWednesday) { accountData.odeCraft = false; accountData.odeShop = false; accountData.dailyDungeon.natural = 7; }
                 }
-
                 characters.forEach(char => {
                     if (!char.tasks) return;
                     if (h === 5) {
@@ -129,8 +109,7 @@
                     if (conquestHours.includes(h)) char.tasks.conquest.natural = Math.min(21, (char.tasks.conquest.natural || 0) + 1);
                     if (transcendenceHours.includes(h)) char.tasks.transcendence.natural = Math.min(14, (char.tasks.transcendence.natural || 0) + 1);
                 });
-                updated = true;
-                lastDate = checkPoint;
+                updated = true; lastDate = checkPoint;
             }
             if (updated) { lastResetTime = lastDate.getTime(); localStorage.setItem(RESET_KEY, lastResetTime); updateStorage(); render(); }
         }
@@ -139,21 +118,9 @@
             const name = document.getElementById('new-name').value.trim();
             const cls = document.getElementById('new-class').value;
             if (!name) return;
-
             characters.push({
-                id: Date.now(),
-                name: name,
-                class: cls,
-                missionDone: false,
-                abyssDone: false,
-                tasks: {
-                    nightmare: { natural: 2, charge: 0 },
-                    conquest: { natural: 3, charge: 0 },
-                    awakening: { natural: 3, charge: 0 },
-                    transcendence: { natural: 0, charge: 0 },
-                    sanctuaryLudra: { natural: 4, charge: 0 },
-                    sanctuaryErosion: { natural: 4, charge: 0 }
-                }
+                id: Date.now(), name: name, class: cls, missionDone: false, abyssDone: false,
+                tasks: { nightmare: { natural: 2, charge: 0 }, conquest: { natural: 3, charge: 0 }, awakening: { natural: 3, charge: 0 }, transcendence: { natural: 0, charge: 0 }, sanctuaryLudra: { natural: 4, charge: 0 }, sanctuaryErosion: { natural: 4, charge: 0 } }
             });
             updateStorage(); render(); closeModal(); document.getElementById('new-name').value = '';
         }
@@ -166,29 +133,28 @@
                 ${renderAccountCounter('슈고 페스타', 'shugo', '(+2/max14)')}
                 ${renderAccountCounter('일일 던전', 'dailyDungeon', '(Wed/7)')}
             `;
-
             const charGrid = document.getElementById('character-grid');
             charGrid.innerHTML = '';
             characters.forEach(char => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-800/60 backdrop-blur-md p-4 rounded-[1.5rem] border border-slate-700 relative shadow-xl";
+                card.className = "bg-slate-800/60 backdrop-blur-md p-3 rounded-[1.25rem] border border-slate-700 relative shadow-xl";
                 card.innerHTML = `
-                    <button onclick="deleteCharacter(${char.id})" class="absolute top-4 right-5 text-slate-600 hover:text-red-400 font-bold text-[10px] uppercase bg-transparent border-none">Del</button>
-                    <div class="mb-3 flex items-center gap-2">
-                        <span class="text-blue-400 font-bold text-[10px] border border-blue-400/40 px-1.5 py-0.5 rounded uppercase">${char.class}</span>
-                        <h2 class="text-xl font-black text-white tracking-tight">${char.name}</h2>
+                    <button onclick="deleteCharacter(${char.id})" class="absolute top-3 right-4 text-slate-600 hover:text-red-400 font-bold text-[9px] uppercase bg-transparent border-none">Del</button>
+                    <div class="mb-2 flex items-center gap-2">
+                        <span class="text-blue-400 font-bold text-[9px] border border-blue-400/40 px-1 py-0.5 rounded uppercase">${char.class}</span>
+                        <h2 class="text-lg font-black text-white tracking-tight">${char.name}</h2>
                     </div>
-                    <div class="space-y-2">
+                    <div class="space-y-1.5">
                         <div class="section-title">일간/주간 체크</div>
-                        ${renderCharCheck(char.id, '사명 임무', 'missionDone', char.missionDone, '(Daily)')}
-                        ${renderCharCheck(char.id, '어비스 회랑', 'abyssDone', char.abyssDone, '(Wed)')}
+                        ${renderCharCheck(char.id, '사명 임무', 'missionDone', char.missionDone, '(D)')}
+                        ${renderCharCheck(char.id, '어비스 회랑', 'abyssDone', char.abyssDone, '(W)')}
                         <div class="section-title">캐릭터 던전</div>
-                        ${renderCharCounter(char.id, '악몽의 던전', 'nightmare', char.tasks.nightmare, '(+2/max14)')}
-                        ${renderCharCounter(char.id, '정복 던전', 'conquest', char.tasks.conquest, '(5,13,21시/max21)')}
-                        ${renderCharCounter(char.id, '각성전', 'awakening', char.tasks.awakening, '(Wed/3)')}
-                        ${renderCharCounter(char.id, '초월', 'transcendence', char.tasks.transcendence, '(0,12시/max14)')}
-                        ${renderCharCounter(char.id, '성역(루드라)', 'sanctuaryLudra', char.tasks.sanctuaryLudra, '(Wed/4)')}
-                        ${renderCharCounter(char.id, '성역(침식)', 'sanctuaryErosion', char.tasks.sanctuaryErosion, '(Wed/4)')}
+                        ${renderCharCounter(char.id, '악몽의 던전', 'nightmare', char.tasks.nightmare, '(+2)')}
+                        ${renderCharCounter(char.id, '정복 던전', 'conquest', char.tasks.conquest, '(3회)')}
+                        ${renderCharCounter(char.id, '각성전', 'awakening', char.tasks.awakening, '(3회)')}
+                        ${renderCharCounter(char.id, '초월', 'transcendence', char.tasks.transcendence, '(2회)')}
+                        ${renderCharCounter(char.id, '성역(루드라)', 'sanctuaryLudra', char.tasks.sanctuaryLudra, '(4회)')}
+                        ${renderCharCounter(char.id, '성역(침식)', 'sanctuaryErosion', char.tasks.sanctuaryErosion, '(4회)')}
                     </div>`;
                 charGrid.appendChild(card);
             });
@@ -196,25 +162,25 @@
 
         function renderAccountCheck(label, key, rule) {
             const isDone = accountData[key];
-            return `<div onclick="toggleAccountCheck('${key}')" class="flex items-center justify-between p-2 bg-blue-900/20 rounded-xl border border-blue-500/30 cursor-pointer">
-                <span class="${isDone ? 'checked-item' : 'text-slate-200'} font-bold text-[13px] italic">${label} <span class="rule-text text-blue-400">${rule}</span></span>
-                <div class="w-5 h-5 rounded border-2 border-blue-500/50 flex items-center justify-center text-sm ${isDone ? 'bg-blue-500 border-blue-500 text-white' : 'text-transparent'}">✓</div>
+            return `<div onclick="toggleAccountCheck('${key}')" class="flex items-center justify-between p-2 bg-blue-900/20 rounded-lg border border-blue-500/30 cursor-pointer">
+                <span class="${isDone ? 'checked-item' : 'text-slate-200'} font-bold text-[12px] italic leading-tight">${label} <span class="rule-text text-blue-400">${rule}</span></span>
+                <div class="w-4 h-4 rounded border border-blue-500/50 flex items-center justify-center text-[10px] ${isDone ? 'bg-blue-500 border-blue-500 text-white' : 'text-transparent'}">✓</div>
             </div>`;
         }
 
         function renderAccountCounter(label, key, rule) {
             const data = accountData[key];
-            return `<div class="p-2 bg-blue-900/20 rounded-xl border border-blue-500/30">
-                <div class="text-[13px] font-black text-slate-100 mb-1">${label} <span class="rule-text text-blue-400">${rule}</span></div>
+            return `<div class="p-2 bg-blue-900/20 rounded-lg border border-blue-500/30">
+                <div class="text-[12px] font-black text-slate-100 mb-1 leading-tight">${label} <span class="rule-text text-blue-400">${rule}</span></div>
                 <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2 flex-1 justify-center">
+                    <div class="flex items-center gap-1.5 flex-1 justify-center border-r border-blue-500/20">
                         <button onclick="updateAccountCount('${key}', 'natural', -1)" class="counter-btn bg-blue-800">-</button>
-                        <span class="num-display text-orange-400 text-sm">${data.natural}</span>
+                        <span class="num-display text-orange-400">${data.natural}</span>
                         <button onclick="updateAccountCount('${key}', 'natural', 1)" class="counter-btn bg-blue-800">+</button>
                     </div>
-                    <div class="flex items-center gap-2 flex-1 justify-center">
+                    <div class="flex items-center gap-1.5 flex-1 justify-center">
                         <button onclick="updateAccountCount('${key}', 'charge', -1)" class="counter-btn bg-blue-800">-</button>
-                        <span class="num-display text-blue-400 text-sm">${data.charge}</span>
+                        <span class="num-display text-blue-400">${data.charge}</span>
                         <button onclick="updateAccountCount('${key}', 'charge', 1)" class="counter-btn bg-blue-800">+</button>
                     </div>
                 </div>
@@ -222,24 +188,24 @@
         }
 
         function renderCharCheck(id, label, key, isDone, rule) {
-            return `<div onclick="toggleCharCheck(${id}, '${key}')" class="flex items-center justify-between p-2 bg-slate-900/60 rounded-xl border border-slate-700/50 cursor-pointer">
-                <span class="${isDone ? 'checked-item' : 'text-slate-200'} font-bold text-[13px] italic">${label} <span class="rule-text">${rule}</span></span>
-                <div class="w-5 h-5 rounded border-2 border-slate-600 flex items-center justify-center text-sm ${isDone ? 'bg-green-500 border-green-500 text-white' : 'text-transparent'}">✓</div>
+            return `<div onclick="toggleCharCheck(${id}, '${key}')" class="flex items-center justify-between p-1.5 bg-slate-900/60 rounded-lg border border-slate-700/50 cursor-pointer">
+                <span class="${isDone ? 'checked-item' : 'text-slate-200'} font-bold text-[12px] italic leading-tight">${label} <span class="rule-text">${rule}</span></span>
+                <div class="w-4 h-4 rounded border border-slate-600 flex items-center justify-center text-[10px] ${isDone ? 'bg-green-500 border-green-500 text-white' : 'text-transparent'}">✓</div>
             </div>`;
         }
 
         function renderCharCounter(charId, label, taskKey, data, rule) {
             return `<div class="space-y-0.5">
-                <div class="text-[14px] font-black text-slate-100 ml-1 tracking-tight">${label} <span class="rule-text">${rule}</span></div>
+                <div class="text-[13px] font-black text-slate-100 ml-1 tracking-tight leading-tight">${label} <span class="rule-text">${rule}</span></div>
                 <div class="counter-row">
-                    <div class="counter-unit flex-1"><span class="text-[10px] text-slate-400">자연</span>
+                    <div class="counter-unit flex-1 border-r border-slate-700/50 pr-1"><span class="text-[9px] text-slate-500">자</span>
                         <button onclick="updateCharCount(${charId}, '${taskKey}', 'natural', -1)" class="counter-btn">-</button>
-                        <span class="num-display text-orange-400 text-sm">${data.natural}</span>
+                        <span class="num-display text-orange-400">${data.natural}</span>
                         <button onclick="updateCharCount(${charId}, '${taskKey}', 'natural', 1)" class="counter-btn">+</button>
                     </div>
-                    <div class="counter-unit flex-1 justify-end"><span class="text-[10px] text-slate-400">충전</span>
+                    <div class="counter-unit flex-1 justify-end pl-1"><span class="text-[9px] text-slate-500">충</span>
                         <button onclick="updateCharCount(${charId}, '${taskKey}', 'charge', -1)" class="counter-btn">-</button>
-                        <span class="num-display text-blue-400 text-sm">${data.charge}</span>
+                        <span class="num-display text-blue-400">${data.charge}</span>
                         <button onclick="updateCharCount(${charId}, '${taskKey}', 'charge', 1)" class="counter-btn">+</button>
                     </div>
                 </div>
@@ -252,11 +218,7 @@
         function updateCharCount(id, key, type, chg) { const c = characters.find(x => x.id === id); if(c) { c.tasks[key][type] = Math.max(0, c.tasks[key][type] + chg); updateStorage(); render(); } }
         function deleteCharacter(id) { if(confirm("삭제?")) { characters = characters.filter(c => c.id !== id); updateStorage(); render(); } }
         function updateStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(characters)); localStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountData)); }
-
-        // 초기 실행
-        checkAutoReset();
-        render();
-        setInterval(checkAutoReset, 60000); 
+        checkAutoReset(); render(); setInterval(checkAutoReset, 60000); 
     </script>
 </body>
 </html>
